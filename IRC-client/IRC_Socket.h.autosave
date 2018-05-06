@@ -1,0 +1,41 @@
+#pragma once
+
+#ifndef IRC_SOCKET_H
+#define IRC_SOCKET_H
+
+#endif // IRC_SOCKET_H
+
+#include <QTcpSocket>
+#include <QMessageBox>
+#include <QMainWindow>
+#include <QDataStream>
+
+class IRC_Server : public QObject
+{
+    Q_OBJECT
+
+public:
+    bool connect_to_server(const QString &host,const int port);
+
+    int get_port()const;
+    QString get_host()const;
+    QTcpSocket* get_socket()const;
+
+    IRC_Socket();
+    ~IRC_Socket();
+
+signals:
+      void signal_connected();
+      void signal_error_connected();
+      void signal_ready_recv();
+      //void signal_ready_send();
+
+private:
+    QTcpSocket *_socket;
+    QString _host;
+    int _port;
+    QString _name;
+    QString _nick;
+    QList<QString> _users;
+    QWidgetList _chat;
+};
