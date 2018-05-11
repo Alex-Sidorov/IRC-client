@@ -12,6 +12,7 @@
 #include <QDataStream>
 #include <QDateTime>
 #include <QTime>
+#include <QFile>
 
 #include "Data_for_server.h"
 
@@ -20,7 +21,7 @@ class IRC_Server : public QObject
     Q_OBJECT
 
 public:
-    bool connect_to_server();
+    void connect_to_server();
     void disconnect_to_server();
 
     int get_port()const;
@@ -47,6 +48,8 @@ public:
     void show_chat_server(QListWidget *chat);
     void show_users_server(QListWidget *users);
 
+    void write_data(QFile &file);
+
     IRC_Server();
     IRC_Server(Data_for_server info);
     IRC_Server(const QString &name,const QString &real_name,const QString &nick,const QString &host,const int port);
@@ -58,7 +61,7 @@ public slots:
     void slot_recv();
 
 signals:
-    void change_chat();
+    void change_chat(IRC_Server *);
 
 private:
 

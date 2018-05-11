@@ -15,6 +15,7 @@ void Window_For_Add_User::slot_for_working_info()
 
 void Window_For_Add_User::clear_window()
 {
+    error_label->clear();
     nick_edit->clear();
 }
 
@@ -49,9 +50,9 @@ Window_For_Add_User::Window_For_Add_User()
 
     nick_edit = new QLineEdit;
 
-    main_layout->addWidget(top_label);
-    main_layout->addWidget(error_label);
-    main_layout->addWidget(nick_label);
+    main_layout->addWidget(top_label,0,Qt::AlignHCenter);
+    main_layout->addWidget(error_label,0,Qt::AlignHCenter);
+    main_layout->addWidget(nick_label,0,Qt::AlignHCenter);
     main_layout->addWidget(nick_edit);
     main_layout->addWidget(enter);
 

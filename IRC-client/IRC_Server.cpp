@@ -1,26 +1,22 @@
 #include "IRC_Server.h"
 
-bool IRC_Server::connect_to_server()
+void IRC_Server::connect_to_server()
 {
+    show_message(QString("["+get_time()+"] "+_host+":connecting..."));
     _socket->connectToHost(_host,_port);
-
-    if(!_socket->isOpen())
-    {
-        return false;
-    }
-
-    send_message(QString("NICK " + _nick));
-    send_message(QString("USER " + _name + " 8 * :" + _real_name));
-    return true;
 }
 
 void IRC_Server::disconnect_to_server()
 {
-    _socket->disconnectFromHost();
+    _socket->close();
+    show_message(QString("["+get_time()+"] "+_host+":disconnected."));
 }
 
 void IRC_Server::slot_connected()
 {
+    send_message(QString("NICK " + _nick));
+    send_message(QString("USER " + _name + " 8 * :" + _real_name));
+
     show_message(QString("["+get_time()+"] "+_host+":connected."));
 }
 
@@ -45,13 +41,14 @@ void IRC_Server::slot_recv()//TODO
 void IRC_Server::show_message(QString message)
 {
      _chat.addItem(message);
-     emit change_chat();
+     emit change_chat(this);
 }
 
 void IRC_Server::send_message(QString message)
 {
-    if(_socket->isValid())
+    if(_socket->state()==QAbstractSocket::ConnectedState)
     {
+        show_message(QString("["+get_time()+"] "+_host+":"+message));
         _socket->write((message+"\n").toUtf8());
     }
 }
@@ -134,15 +131,26 @@ void IRC_Server::set_port(int port)
 
 void IRC_Server::delete_user(int index)
 {
-    if(index>0 && index<_users.sizeHintForColumn(0))
+    if(index>=0 && index<_users.count())
     {
-        _users.removeItemWidget(_users.item(index));
+        _users.takeItem(index);
     }
 }
 
 void IRC_Server::add_user(QString nick)
 {
     _users.addItem(nick);
+}
+
+void IRC_Server::write_data(QFile &file)
+{
+    QDataStream stream(&file);
+    stream.setVersion(QDataStream::Qt_5_2);
+    stream<< _host << _port<< _name<< _real_name<< _nick<<_users.count();
+    for(int i = 0; i<_users.count(); i++)
+    {
+        stream<<_users.item(i)->text();
+    }
 }
 
 IRC_Server::IRC_Server(Data_for_server info):IRC_Server()
@@ -175,7 +183,7 @@ IRC_Server::~IRC_Server()
 {
     if(_socket->isOpen())
     {
-        _socket->disconnectFromHost();
+        _socket->close();
     }
     delete _socket;
 }

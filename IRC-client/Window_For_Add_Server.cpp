@@ -20,6 +20,7 @@ void Window_For_Add_Server::slot_for_working_info()
 
 void Window_For_Add_Server::clear_window()
 {
+    error_label->clear();
     port_edit->setText("6667");
     host_edit->clear();
     real_name_edit->clear();
@@ -73,19 +74,19 @@ Window_For_Add_Server::Window_For_Add_Server()
     nick_edit = new QLineEdit;
     real_name_edit = new QLineEdit;
 
-    port_layout->addWidget(port_label);
+    port_layout->addWidget(port_label,0,Qt::AlignHCenter);
     port_layout->addWidget(port_edit);
 
-    host_layout->addWidget(host_label);
+    host_layout->addWidget(host_label,0,Qt::AlignHCenter);
     host_layout->addWidget(host_edit);
 
-    nick_layout->addWidget(nick_label);
+    nick_layout->addWidget(nick_label,0,Qt::AlignHCenter);
     nick_layout->addWidget(nick_edit);
 
-    name_layout->addWidget(name_label);
+    name_layout->addWidget(name_label,0,Qt::AlignHCenter);
     name_layout->addWidget(name_edit);
 
-    real_name_layout->addWidget(real_name_label);
+    real_name_layout->addWidget(real_name_label,0,Qt::AlignHCenter);
     real_name_layout->addWidget(real_name_edit);
 
     host_port_layout->addLayout(host_layout);
@@ -94,8 +95,8 @@ Window_For_Add_Server::Window_For_Add_Server()
     nick_name_layout->addLayout(nick_layout);
     nick_name_layout->addLayout(name_layout);
 
-    main_layout->addWidget(top_label);
-    main_layout->addWidget(error_label);
+    main_layout->addWidget(top_label,0,Qt::AlignHCenter);
+    main_layout->addWidget(error_label,0,Qt::AlignHCenter);
     main_layout->addLayout(host_port_layout);
     main_layout->addLayout(nick_name_layout);
     main_layout->addLayout(real_name_layout);

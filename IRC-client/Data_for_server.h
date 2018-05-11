@@ -1,6 +1,8 @@
 #ifndef DATA_FOR_SERVER_H
 #define DATA_FOR_SERVER_H
 
+#include <QString>
+
 struct Data_for_server
 {
     QString host;
