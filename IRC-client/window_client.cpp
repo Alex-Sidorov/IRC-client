@@ -27,7 +27,36 @@ Window_client::Window_client(QWidget *parent) : QMainWindow(parent),file_name("d
 
     connect(main_window->field_for_input_text,SIGNAL(returnPressed()),SLOT(slot_send_message()));
 
+    help_label();
+
     cursor = 0;
+}
+
+void Window_client::help_label()
+{
+    QString help;
+    help+="ADMIN [<сервер>]- Cервер вернет информацию о сервере\n";
+    help+="AWAY [<сообщение>]- Задаёт сообщение, которое автоматически отображается в ответ на приватные сообщения\n";
+    help+="DIE - Заставить сервер отключиться\n";
+    help+="INFO [<Цель>] - Возвращает информацию о сервере, определённом в параметре <цель>, или текущем сервере, если параметр <цель> не указан.\n";
+    help+="INVITE <пользователь> <канал> - Приглашает пользователя <пользователь> на канал <канал>\n";
+    help+="ISON <имена пользователей> - Запрашивает статус пользователей, перечисленных в первом аргументе команды <имена пользователей>, и разделенных пробелами.\n";
+    help+="JOIN <каналы> [<ключи>] - Позволяет зайти на каналы, заданные в виде разделенного запятыми списка <каналы>. \nТакже позволяет указать пароли, если они нужны, в разделенном запятыми списке <ключи>.Если канал(ы) не существуют, они будут созданы.\n";
+    help+="LIST [<каналы> [<сервер>]] - Возвращает список всех каналов на сервере.Если задан разделенный запятыми список <каналы>, возвращает их топики.\nЕсли определен <сервер>, команда передается серверу <сервер>.\n";
+    help+="NAMES [<каналы>] - Возвращает список пользователей, находящихся на каналах, определённых в разделенном запятыми списке <каналы>.\nЕсли аргумент <каналы> не определен, отображает всех пользователей, распределенных по именам каналов. \n";
+    help+="NICK <имя пользователя> - Позволяет пользователю изменить его ник в IRC.\n";
+    help+="NOTICE <цель сообщения> <сообщение> - Эта команда работает так же, как PRIVMSG,\nза исключением того, что автоматический ответ не может быть отправлен в ответ на сообщение NOTICE.\n";
+    help+="PART <каналы> - Позволяет пользователю покинуть каналы, определённые в разделенном запятыми списке <каналы>.\n";
+    help+="PING <сервер> - Проверяет наличие соединения. В ответ на сообщение PING возвращается ответ PONG.\n";
+    help+="PRIVMSG <цель сообщения> <сообщение>- Отправляет приватное сообщение <сообщение> для <цель сообщения>,\nкоторой может являться пользователь или канал.\n";
+    help+="QUIT [<сообщение>] - Отключает пользователя от сервера.\n";
+    help+="SQUIT <сервер> <комментарий> - Заставляет сервер <сервер> выйти из сети.\n";
+    help+="STATS <запрос> [<сервер>]- Возвращает статистику текущего сервера, или сервера <сервер>, если он определен.\n";
+    help+="WHO [<имя>] - Возвращает список пользователей, совпадающих с <имя>.\n";
+    help+="WHOIS [<сервер>] <имена пользователей> - Возвращает информацию о пользователях, определённых в разделенном запятыми списке <имена пользователей>\n";
+    help+="WHOWAS <имя пользователя> [<сетчик> [<сервер>]] - Возвращает информацию об имени пользователя, которое сейчас не используется\n";
+
+    main_window->label->setToolTip(help);
 }
 
 bool Window_client::read_data()
@@ -65,6 +94,8 @@ bool Window_client::read_data()
      }
      file.close();
      cursor = 0;
+     main_window->servers->item(cursor)->setBackgroundColor(QColor(Qt::blue));
+     main_window->servers->item(cursor)->setTextColor(QColor(Qt::black));
      return true;
 }
 
@@ -167,6 +198,7 @@ void Window_client::slot_add_server()
 {
     main_window->statusBar->clearMessage();
     window_for_add_server->clear_window();
+    window_for_add_server->close_window();
     window_for_add_server->open_window();
 }
 
@@ -175,6 +207,8 @@ void Window_client::slot_add_user()
     if(main_window->servers->count()!=0)
     {
         window_for_add_user->clear_window();
+        window_for_add_user->clear_window();
+        window_for_add_user->close_window();
         window_for_add_user->open_window();
     }
     else
@@ -187,8 +221,21 @@ void Window_client::add_server(struct Data_for_server info)
 {
     IRC_Server *socket = new IRC_Server(info);
     _sockets+=socket;
+    _box_for_users_input.push_back(QString());
     main_window->servers->addItem(socket->get_host());
+
     connect(socket,SIGNAL(change_chat(IRC_Server *)),this,SLOT(slot_recv_message(IRC_Server *)));
+    connect(socket,SIGNAL(error_connect(IRC_Server*)),this,SLOT(slot_error_connect(IRC_Server*)));
+}
+
+void Window_client::slot_error_connect(IRC_Server *socket)
+{
+    int index = find_server(socket);
+    if(index!=-1)
+    {
+        main_window->servers->item(index)->setBackgroundColor(QColor(Qt::red));
+        main_window->servers->item(index)->setTextColor(QColor(Qt::black));
+    }
 }
 
 void Window_client::slot_recv_message(IRC_Server *socket)
@@ -196,7 +243,30 @@ void Window_client::slot_recv_message(IRC_Server *socket)
     if(socket == _sockets.at(cursor))
     {
         _sockets.at(cursor)->show_chat_server(main_window->chat);
+        main_window->chat->scrollToItem(main_window->chat->item(main_window->chat->count()-1));
     }
+    else
+    {
+        int index = find_server(socket);
+        if(index != -1)
+        {
+            main_window->servers->item(index)->setBackgroundColor(QColor(Qt::yellow));
+            main_window->servers->item(index)->setTextColor(QColor(Qt::black));
+        }
+    }
+}
+
+int Window_client::find_server(IRC_Server *socket)
+{
+    QList<IRC_Server*>::Iterator it = _sockets.begin();
+    for(int index = 0; it!=_sockets.end(); it++, index++)
+    {
+        if(*it==socket)
+        {
+            return index;
+        }
+    }
+    return -1;
 }
 
 void Window_client::slot_send_message()
@@ -238,6 +308,7 @@ void Window_client::slot_delete_server(int index)
     IRC_Server *item = _sockets.takeAt(index);
     delete item;
     main_window->servers->takeItem(index);
+    _box_for_users_input.takeAt(index);
     if(cursor==index)
     {
         if(main_window->servers->count()==0)
@@ -251,6 +322,11 @@ void Window_client::slot_delete_server(int index)
             cursor = 0;
             _sockets.at(cursor)->show_chat_server(main_window->chat);
             _sockets.at(cursor)->show_users_server(main_window->users);
+            main_window->field_for_input_text->setText(_box_for_users_input.at(cursor));
+            main_window->field_for_input_text->setFocus();
+
+            main_window->servers->item(cursor)->setBackgroundColor(QColor(Qt::blue));
+            main_window->servers->item(cursor)->setTextColor(QColor(Qt::white));
         }
     }
 }
@@ -289,7 +365,6 @@ Window_client::~Window_client()
         file.close();
     }
 
-
     if(window_for_add_server)
     {
         delete window_for_add_server;
@@ -309,9 +384,41 @@ void Window_client::on_servers_doubleClicked(const QModelIndex &index)
             return;
         }
 
+
+        *(_box_for_users_input.begin()+cursor) = main_window->field_for_input_text->text();
+        if(_sockets.at(cursor)->is_connected())
+        {
+            main_window->servers->item(cursor)->setBackgroundColor(QColor(Qt::green));
+        }
+        else
+        {
+            main_window->servers->item(cursor)->setBackgroundColor(QColor(Qt::white));
+            main_window->servers->item(cursor)->setTextColor(QColor(Qt::black));
+        }
+
+
         cursor = index.row();
+
+        main_window->field_for_input_text->setText(_box_for_users_input.at(cursor));
 
         _sockets.at(cursor)->show_chat_server(main_window->chat);
         _sockets.at(cursor)->show_users_server(main_window->users);
 
+        main_window->chat->scrollToItem(main_window->chat->item(main_window->chat->count()-1));
+
+        main_window->field_for_input_text->setFocus();
+
+        main_window->servers->item(cursor)->setBackgroundColor(QColor(Qt::blue));
+        main_window->servers->item(cursor)->setTextColor(QColor(Qt::white));
+
+}
+
+void Window_client::on_users_doubleClicked(const QModelIndex &index)
+{
+    if(!index.isValid())
+    {
+        return;
+    }
+    main_window->field_for_input_text->setText(QString("PRIVMSG "+main_window->users->item(index.row())->text()+" :"));
+    main_window->field_for_input_text->setFocus();
 }

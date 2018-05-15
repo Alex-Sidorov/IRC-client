@@ -15,6 +15,7 @@
 #include <QFile>
 
 #include "Data_for_server.h"
+#include "Parser.h"
 
 class IRC_Server : public QObject
 {
@@ -62,6 +63,7 @@ public slots:
 
 signals:
     void change_chat(IRC_Server *);
+    void error_connect(IRC_Server *);
 
 private:
 

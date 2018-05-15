@@ -14,8 +14,8 @@ public:
 
     QString get_info()const;
 
-    void open_window()const;
-    void close_window()const;
+    void open_window();
+    void close_window();
 
     void clear_window();
 

@@ -23,19 +23,23 @@ void IRC_Server::slot_connected()
 void IRC_Server::slot_error_connected()
 {
    show_message(QString("["+get_time()+"] "+_host+":error connected."));
+   _socket->close();
+   emit error_connect(this);
 }
 
 void IRC_Server::slot_recv()//TODO
 {
     QString message;
+    Parser parser;
 
     while(_socket->canReadLine())
     {
         message.append(_socket->readLine());
+        message.resize(message.size()-2);//delete '\r' and '\n'
+        parser.lets_pars(message);
+        show_message(QString("["+get_time()+"] " +parser.get_message()));
+        message.clear();
     }
-    message.resize(message.size()-2);//delete '\r' and '\n'
-    show_message(QString("["+get_time()+"] "+_host+":"+message));
-
 }
 
 void IRC_Server::show_message(QString message)
@@ -48,7 +52,7 @@ void IRC_Server::send_message(QString message)
 {
     if(_socket->state()==QAbstractSocket::ConnectedState)
     {
-        show_message(QString("["+get_time()+"] "+_host+":"+message));
+        show_message(QString("["+get_time()+"] "+message));
         _socket->write((message+"\n").toUtf8());
     }
 }
@@ -101,7 +105,7 @@ QString IRC_Server::get_host()const
 
 bool IRC_Server::is_connected()const
 {
-    return _socket->isValid();
+    return _socket->isOpen();
 }
 
 void IRC_Server::set_name(QString &name)

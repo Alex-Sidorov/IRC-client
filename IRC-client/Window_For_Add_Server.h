@@ -16,10 +16,11 @@ class Window_For_Add_Server : public QObject
 public:
     struct Data_for_server get_info()const;
 
-    void open_window()const;
-    void close_window()const;
+    void open_window();
+    void close_window();
 
     void clear_window();
+
 
     Window_For_Add_Server();
     virtual~Window_For_Add_Server();

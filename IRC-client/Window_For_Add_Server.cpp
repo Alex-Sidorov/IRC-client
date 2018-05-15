@@ -33,12 +33,12 @@ struct Data_for_server Window_For_Add_Server::get_info()const
     return info;
 }
 
-void Window_For_Add_Server::open_window()const
+void Window_For_Add_Server::open_window()
 {
     widget->show();
 }
 
-void Window_For_Add_Server::close_window()const
+void Window_For_Add_Server::close_window()
 {
     widget->close();
 }
@@ -105,6 +105,11 @@ Window_For_Add_Server::Window_For_Add_Server()
     widget->setLayout(main_layout);
 
     connect(enter,SIGNAL(clicked()),this,SLOT(slot_for_working_info()));
+    connect(port_edit,SIGNAL(returnPressed()),this,SLOT(slot_for_working_info()));
+    connect(nick_edit,SIGNAL(returnPressed()),this,SLOT(slot_for_working_info()));
+    connect(name_edit,SIGNAL(returnPressed()),this,SLOT(slot_for_working_info()));
+    connect(real_name_edit,SIGNAL(returnPressed()),this,SLOT(slot_for_working_info()));
+    connect(host_edit,SIGNAL(returnPressed()),this,SLOT(slot_for_working_info()));
 }
 
 

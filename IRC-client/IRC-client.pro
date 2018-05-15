@@ -17,13 +17,15 @@ SOURCES += main.cpp\
     IRC_Server.cpp \
     window_client.cpp \
     Window_For_Add_Server.cpp \
-    Window_For_Add_User.cpp
+    Window_For_Add_User.cpp \
+    Parser.cpp
 
 HEADERS  += \
     IRC_Server.h \
     window_client.h \
     Window_For_Add_Server.h \
     Data_for_server.h \
-    Window_For_Add_User.h
+    Window_For_Add_User.h \
+    Parser.h
 
 FORMS    += window_client.ui

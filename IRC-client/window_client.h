@@ -39,9 +39,11 @@ public slots:
     void slot_read_info_of_user();
     void slot_read_info_of_server();
     void slot_recv_message(IRC_Server *socket);
+    void slot_error_connect(IRC_Server *socket);
 
 private slots:
     void on_servers_doubleClicked(const QModelIndex &index);
+    void on_users_doubleClicked(const QModelIndex &index);
 
 signals:
     void error_read();
@@ -49,12 +51,15 @@ signals:
 private:
     void add_server(struct Data_for_server info);
     void add_user(QString nick,bool flag_print = true);
+    int find_server(IRC_Server *socket);
+    void help_label();
 
     Window_For_Add_Server *window_for_add_server;
     Window_For_Add_User *window_for_add_user;
 
     Ui::Window_client *main_window;
     QList<IRC_Server*> _sockets;
+    QList<QString> _box_for_users_input;
 
     const QString file_name;
 

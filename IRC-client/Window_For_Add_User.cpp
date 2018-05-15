@@ -19,12 +19,12 @@ void Window_For_Add_User::clear_window()
     nick_edit->clear();
 }
 
-void Window_For_Add_User::open_window()const
+void Window_For_Add_User::open_window()
 {
     widget->show();
 }
 
-void Window_For_Add_User::close_window()const
+void Window_For_Add_User::close_window()
 {
     widget->close();
 }
@@ -36,6 +36,7 @@ QString Window_For_Add_User::get_info()const
 
 Window_For_Add_User::Window_For_Add_User()
 {
+
     main_layout = new QVBoxLayout;
 
     enter = new QPushButton("Enter");
@@ -59,6 +60,7 @@ Window_For_Add_User::Window_For_Add_User()
     widget->setLayout(main_layout);
 
     connect(enter,SIGNAL(clicked()),SLOT(slot_for_working_info()));
+    connect(nick_edit,SIGNAL(returnPressed()),this,SLOT(slot_for_working_info()));
 }
 
 Window_For_Add_User::~Window_For_Add_User()
