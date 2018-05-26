@@ -19,17 +19,20 @@ public:
     void open_window();
     void close_window();
 
+    void fill_form(struct Data_for_server data, int index);
+
     void clear_window();
 
 
     Window_For_Add_Server();
     virtual~Window_For_Add_Server();
 
-public slots:
-    void slot_for_working_info();
-
 signals:
     void entry_info();
+    void change_info(int);
+
+private slots:
+    void slot_for_working_info();
 
 private:
     QWidget *widget;
@@ -62,6 +65,7 @@ private:
     QLineEdit *real_name_edit;
 
     Data_for_server info;
+    int index_server;
 };
 
 #endif // WINDOW_FOR_ADD_SERVER_H

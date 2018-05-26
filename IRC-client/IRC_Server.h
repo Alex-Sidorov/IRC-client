@@ -30,13 +30,13 @@ public:
     QString get_name()const;
     QString get_real_name()const;
     QString get_nick()const;
+    Data_for_server get_info()const;
 
     void set_port(int port);
     void set_name(QString &name);
     void set_real_name(QString &real_name);
     void set_nick(QString &nick);
     void set_host(QString &host);
-
     void change_all_info(Data_for_server info);
 
     void send_message(QString message);
@@ -46,8 +46,15 @@ public:
     void add_user(QString nick);
     void delete_user(int index);
 
+    void add_channels(QString name);
+    void delete_channels(int index);
+
+    void change_user(int index, QString &nick);
+    void change_channel(int index, QString &name);
+
     void show_chat_server(QListWidget *chat);
     void show_users_server(QListWidget *users);
+    void show_channels_server(QListWidget *channels);
 
     void write_data(QFile &file);
 
@@ -56,14 +63,14 @@ public:
     IRC_Server(const QString &name,const QString &real_name,const QString &nick,const QString &host,const int port);
     virtual ~IRC_Server();
 
-public slots:
-    void slot_connected();
-    void slot_error_connected();
-    void slot_recv();
-
 signals:
     void change_chat(IRC_Server *);
     void error_connect(IRC_Server *);
+
+private slots:
+    void slot_connected();
+    void slot_error_connected();
+    void slot_recv();
 
 private:
 
@@ -77,5 +84,6 @@ private:
     QString _real_name;
     QString _nick;
     QListWidget _users;
+    QListWidget _channels;
     QListWidget _chat;
 };

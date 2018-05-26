@@ -1,12 +1,12 @@
-#ifndef WINDOW_FOR_ADD_USER_H
-#define WINDOW_FOR_ADD_USER_H
+#ifndef WINDOW_FOR_ADD_CHANNEL_H
+#define WINDOW_FOR_ADD_CHANNEL_H
 
 #include <QVBoxLayout>
 #include <QLabel>
 #include <QLineEdit>
 #include <QPushButton>
 
-class Window_For_Add_User:public QObject
+class Window_For_Add_Channel:public QObject
 {
     Q_OBJECT
 
@@ -17,16 +17,16 @@ public:
     void open_window();
     void close_window();
 
-    void fill_form(QString nick,int index);
-
     void clear_window();
+    void fill_form(QString name, int index);
 
-    Window_For_Add_User();
-    virtual ~Window_For_Add_User();
+    Window_For_Add_Channel();
+    virtual ~Window_For_Add_Channel();
+
 
 signals:
-    void change_info(int);
     void entry_info();
+    void change_info(int);
 
 private slots:
     void slot_for_working_info();
@@ -40,14 +40,13 @@ private:
     QLabel *top_label;
     QLabel *error_label;
 
-    QLabel *nick_label;
-    QLineEdit *nick_edit;
+    QLabel *name_label;
+    QLineEdit *name_edit;
 
     QPushButton *enter;
-    QString _nick;
+    QString _name;
 
-    int index_user;
-
+    int index_channel;
 };
 
-#endif // WINDOW_FOR_ADD_USER_H
+#endif // WINDOW_FOR_ADD_CHANNEL_H

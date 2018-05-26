@@ -27,7 +27,7 @@ void IRC_Server::slot_error_connected()
    emit error_connect(this);
 }
 
-void IRC_Server::slot_recv()//TODO
+void IRC_Server::slot_recv()
 {
     QString message;
     Parser parser;
@@ -78,6 +78,34 @@ void IRC_Server::show_users_server(QListWidget *users)
 
 }
 
+void IRC_Server::show_channels_server(QListWidget *channels)
+{
+    channels->clear();
+
+    for(int i=0; i<_channels.count(); i++)
+    {
+        channels->addItem(_channels.item(i)->text());
+    }
+
+}
+
+void IRC_Server::change_user(int index, QString &nick)
+{
+    if(_users.count()>index && index>=0)
+    {
+        _users.item(index)->setText(nick);
+    }
+}
+
+
+void IRC_Server::change_channel(int index, QString &name)
+{
+    if(_channels.count()>index && index>=0)
+    {
+        _channels.item(index)->setText(name);
+    }
+}
+
 void IRC_Server::change_all_info(Data_for_server info)
 {
     _name=info.name;
@@ -91,6 +119,11 @@ QString IRC_Server::get_time()
 {
     QDateTime date_and_time=QDateTime::currentDateTime();
     return date_and_time.time().toString();
+}
+
+struct Data_for_server IRC_Server::get_info()const
+{
+    return Data_for_server {_host,_port,_name,_real_name,_nick};
 }
 
 int IRC_Server::get_port()const
@@ -146,6 +179,19 @@ void IRC_Server::add_user(QString nick)
     _users.addItem(nick);
 }
 
+void IRC_Server::delete_channels(int index)
+{
+    if(index>=0 && index<_channels.count())
+    {
+        _channels.takeItem(index);
+    }
+}
+
+void IRC_Server::add_channels(QString name)
+{
+    _channels.addItem(name);
+}
+
 void IRC_Server::write_data(QFile &file)
 {
     QDataStream stream(&file);
@@ -154,6 +200,11 @@ void IRC_Server::write_data(QFile &file)
     for(int i = 0; i<_users.count(); i++)
     {
         stream<<_users.item(i)->text();
+    }
+    stream<<_channels.count();
+    for(int i = 0; i<_channels.count(); i++)
+    {
+        stream<<_channels.item(i)->text();
     }
 }
 

@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Window_client</string>
+   <string>IRC-Client</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -88,6 +88,38 @@
           </item>
           <item>
            <widget class="QListWidget" name="servers"/>
+          </item>
+          <item>
+           <widget class="QLabel" name="labelfor_channel">
+            <property name="font">
+             <font>
+              <family>Arial</family>
+              <pointsize>10</pointsize>
+              <weight>75</weight>
+              <italic>true</italic>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="layoutDirection">
+             <enum>Qt::LeftToRight</enum>
+            </property>
+            <property name="text">
+             <string>CHANNEL</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="add_channel">
+            <property name="text">
+             <string>ADD Channel</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QListWidget" name="channels"/>
           </item>
          </layout>
         </item>

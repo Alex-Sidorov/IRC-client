@@ -4,10 +4,12 @@ void Window_For_Add_Server::slot_for_working_info()
 {
     if(port_edit->text().isEmpty()||host_edit->text().isEmpty()||real_name_edit->text().isEmpty()
                 || nick_edit->text().isEmpty()|| name_edit->text().isEmpty())
-        {
+    {
             error_label->setText("Error. Fill in all the fields.");
-        }
-        else
+    }
+    else
+    {
+        if(index_server == -1)
         {
             info.host = host_edit->text();
             info.name = name_edit->text();
@@ -16,10 +18,32 @@ void Window_For_Add_Server::slot_for_working_info()
             info.real_name = real_name_edit->text();
             emit this->entry_info();
         }
+        else
+        {
+            info.host = host_edit->text();
+            info.name = name_edit->text();
+            info.nick = nick_edit->text();
+            info.port = port_edit->text().toInt();
+            info.real_name = real_name_edit->text();
+            emit this->change_info(index_server);
+        }
+    }
+
+}
+
+void Window_For_Add_Server::fill_form(struct Data_for_server data, int index)
+{
+    port_edit->setText(QString::number(data.port));
+    host_edit->setText(data.host);
+    real_name_edit->setText(data.real_name);
+    nick_edit->setText(data.nick);
+    name_edit->setText(data.name);
+    index_server = index;
 }
 
 void Window_For_Add_Server::clear_window()
 {
+    index_server = -1;
     error_label->clear();
     port_edit->setText("6667");
     host_edit->clear();
@@ -110,6 +134,8 @@ Window_For_Add_Server::Window_For_Add_Server()
     connect(name_edit,SIGNAL(returnPressed()),this,SLOT(slot_for_working_info()));
     connect(real_name_edit,SIGNAL(returnPressed()),this,SLOT(slot_for_working_info()));
     connect(host_edit,SIGNAL(returnPressed()),this,SLOT(slot_for_working_info()));
+
+    index_server = -1;
 }
 
 

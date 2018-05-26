@@ -8,13 +8,28 @@ void Window_For_Add_User::slot_for_working_info()
     }
     else
     {
-        nick=nick_edit->text();
-        emit entry_info();
+        if(index_user == -1)
+        {
+            _nick=nick_edit->text();
+            emit entry_info();
+        }
+        else
+        {
+            _nick=nick_edit->text();
+            emit change_info(index_user);
+        }
     }
+}
+
+void Window_For_Add_User::fill_form(QString nick,int index)
+{
+    index_user = index;
+    nick_edit->setText(nick);
 }
 
 void Window_For_Add_User::clear_window()
 {
+    index_user = -1;
     error_label->clear();
     nick_edit->clear();
 }
@@ -31,7 +46,7 @@ void Window_For_Add_User::close_window()
 
 QString Window_For_Add_User::get_info()const
 {
-    return nick;
+    return _nick;
 }
 
 Window_For_Add_User::Window_For_Add_User()
@@ -61,6 +76,7 @@ Window_For_Add_User::Window_For_Add_User()
 
     connect(enter,SIGNAL(clicked()),SLOT(slot_for_working_info()));
     connect(nick_edit,SIGNAL(returnPressed()),this,SLOT(slot_for_working_info()));
+    index_user = -1;
 }
 
 Window_For_Add_User::~Window_For_Add_User()
