@@ -4,17 +4,16 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
-QT       +=network
+QT += core gui
+QT += network
+QT += widgets
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
-
-TARGET = IRC-client
 TEMPLATE = app
 
 
 SOURCES += main.cpp\
     IRC_Server.cpp \
+    Window_For_Add_Channel.cpp \
     window_client.cpp \
     Window_For_Add_Server.cpp \
     Window_For_Add_User.cpp \
@@ -22,6 +21,8 @@ SOURCES += main.cpp\
 
 HEADERS  += \
     IRC_Server.h \
+    Window_For_Add_Channel.h \
+    ui_window_client.h \
     window_client.h \
     Window_For_Add_Server.h \
     Data_for_server.h \
